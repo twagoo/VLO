@@ -16,10 +16,9 @@
  */
 package eu.clarin.cmdi.vlo.wicket.panels.search;
 
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.DataSet;
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.Typeahead;
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.TypeaheadConfig;
-import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.bloodhound.Bloodhound;
+import com.google.common.collect.Lists;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeahead.Dataset;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeahead.Typeahead;
 import eu.clarin.cmdi.vlo.JavaScriptResources;
 import eu.clarin.cmdi.vlo.config.PiwikConfig;
 import eu.clarin.cmdi.vlo.pojo.QueryFacetsSelection;
@@ -57,25 +56,14 @@ public abstract class SearchFormPanel extends GenericPanel<QueryFacetsSelection>
 
         final Form<QueryFacetsSelection> form = new Form<>("search", model);
 
-        // Bind search field to 'query' property of model
-        final TypeaheadConfig typeaheadConfig = new TypeaheadConfig(new DataSet<String>(
-                new Bloodhound<String>("query_bloodhound") {
+        form.add(new Typeahead<String>("query",
+                new PropertyModel<String>(model, "query"),
+                new Dataset("dataset")) {
             @Override
-            public Iterable<String> getChoices(String input) {
+            protected Iterable<String> getChoices(String input) {
                 return autoCompleteDao.getChoices(input);
             }
-
-            @Override
-            public String renderChoice(String choice) {
-                return choice;
-            }
-        }
-        ));
-        typeaheadConfig.withHighlight(true);
-        typeaheadConfig.withHint(true);
-        typeaheadConfig.withMinLength(1);
-        typeaheadConfig.withSelectEvent(true);
-        form.add(new Typeahead<>("query", new PropertyModel<String>(model, "query"), typeaheadConfig));
+        }.remote(true));
 
         // Button allows partial updates but can fall back to a full (non-JS) refresh
         final AjaxFallbackButton submitButton = new AjaxFallbackButton("searchSubmit", form) {
