@@ -165,11 +165,18 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.wicket</groupId>
-                    <artifactId>wicket-request</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>de.agilecoders.wicket</groupId>
+            <artifactId>wicket-bootstrap-extensions</artifactId>
+            <version>0.10.6</version>
+            <exclusions>
                 <exclusion>
                     <groupId>org.apache.wicket</groupId>
-                    <artifactId>wicket-util</artifactId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -276,7 +283,7 @@
                     <execution>
                         <goals>
                             <goal>revision</goal>
-                         </goals>
+                        </goals>
                     </execution>
                 </executions>
                 <configuration>
