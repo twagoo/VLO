@@ -16,18 +16,20 @@
  */
 package eu.clarin.cmdi.vlo.wicket.panels.search;
 
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.DataSet;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.Typeahead;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.TypeaheadConfig;
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.typeaheadV10.bloodhound.Bloodhound;
 import eu.clarin.cmdi.vlo.JavaScriptResources;
 import eu.clarin.cmdi.vlo.config.PiwikConfig;
 import eu.clarin.cmdi.vlo.pojo.QueryFacetsSelection;
 import eu.clarin.cmdi.vlo.service.solr.AutoCompleteService;
 import eu.clarin.cmdi.vlo.wicket.AjaxPiwikTrackingBehavior;
-import java.util.Iterator;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxCallListener;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.form.AjaxFallbackButton;
-import org.apache.wicket.extensions.ajax.markup.html.autocomplete.AutoCompleteTextField;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -56,13 +58,24 @@ public abstract class SearchFormPanel extends GenericPanel<QueryFacetsSelection>
         final Form<QueryFacetsSelection> form = new Form<>("search", model);
 
         // Bind search field to 'query' property of model
-        form.add(new AutoCompleteTextField("query", new PropertyModel<String>(model, "query")) {
-
+        final TypeaheadConfig typeaheadConfig = new TypeaheadConfig(new DataSet<String>(
+                new Bloodhound<String>("query_bloodhound") {
             @Override
-            protected Iterator<String> getChoices(String input) {
+            public Iterable<String> getChoices(String input) {
                 return autoCompleteDao.getChoices(input);
             }
-        });
+
+            @Override
+            public String renderChoice(String choice) {
+                return choice;
+            }
+        }
+        ));
+        typeaheadConfig.withHighlight(true);
+        typeaheadConfig.withHint(true);
+        typeaheadConfig.withMinLength(1);
+        typeaheadConfig.withSelectEvent(true);
+        form.add(new Typeahead<>("query", new PropertyModel<String>(model, "query"), typeaheadConfig));
 
         // Button allows partial updates but can fall back to a full (non-JS) refresh
         final AjaxFallbackButton submitButton = new AjaxFallbackButton("searchSubmit", form) {
