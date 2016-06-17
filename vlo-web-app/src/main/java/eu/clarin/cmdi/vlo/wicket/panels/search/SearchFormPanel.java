@@ -55,7 +55,7 @@ public abstract class SearchFormPanel extends GenericPanel<QueryFacetsSelection>
         super(id, model);
 
         final Form<QueryFacetsSelection> form = new Form<>("search", model);
-
+        
         form.add(new Typeahead<String>("query",
                 new PropertyModel<String>(model, "query"),
                 new Dataset("dataset")) {
