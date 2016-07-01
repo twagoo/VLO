@@ -44,11 +44,22 @@ function copyLinkText() {
 }
 
 function tryCopyAndClose() {
-    //try copy
-    if (copyLinkText()) {
-        //try close (via button)
-        $('.modal-close').click();
-    }
+    setTimeout(function () {
+        //try copy
+        if (copyLinkText()) {
+            //try close (via button)
+            $('.modal-close').click();
+            $('.share-options').tooltip({
+                trigger: 'manual',
+                title: 'Link copied to clipboard',
+                placement: 'bottom'
+            });
+            $('.share-options').tooltip('show');
+            setTimeout(function(){
+                $('.share-options').tooltip('destroy');
+            }, 2000);
+        }
+    }, 500);
 }
 
 function onModalShown(cb) {
