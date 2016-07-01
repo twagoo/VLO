@@ -43,9 +43,17 @@ function copyLinkText() {
     return false;
 }
 
-function onModalShown() {
+function tryCopyAndClose() {
+    //try copy
+    if (copyLinkText()) {
+        //try close (via button)
+        $('.modal-close').click();
+    }
+}
+
+function onModalShown(cb) {
     //copy to clipboard button and instructions are initially hidden because 
     //this requires javascript and should not be shown unless JS is enabled
     $('.copy-to-clipboard').show();
-    $('.js-instructions').show();
+    $('.js-instructions').show(cb);
 }
