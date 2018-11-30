@@ -2,8 +2,22 @@ sudo: false
 language: java
 jdk:
 - oraclejdk8
+
 before_install:
 - echo "MAVEN_OPTS='-Xmx2g -XX:MaxPermSize=512m'" > ~/.mavenrc
+script:
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+- mvn test -B
+- mvn clean install -DskipTests -Pdocker
+deploy:
+  provider: releases
+  api_key:
+    secure: "${VLO_DEPLOY_TOKEN}"
+  file: "vlo-distribution/target/vlo-${TRAVIS_BRANCH}-docker.tar.gz"
+  skip_cleanup: true
+  on:
+    tags: true
+
 notifications:
   email:
     on_success: change
